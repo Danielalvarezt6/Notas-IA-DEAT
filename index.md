@@ -59,28 +59,28 @@ Según su complejidad interna, los agentes se clasifican en:
 ## 3. Teoría del Aprendizaje (Learning Theory)
 
 ### 3.1 El Problema del Aprendizaje Supervisado
-El objetivo es encontrar una función (hipótesis) $h$ que se aproxime a una función desconocida $f$ (la realidad), tal que $h(x) \approx f(x)$, utilizando un conjunto de datos de entrenamiento $D$.
+El objetivo es encontrar una función (hipótesis) $$h$$ que se aproxime a una función desconocida $$f$$ (la realidad), tal que $$h(x) \approx f(x)$$, utilizando un conjunto de datos de entrenamiento $$D$$.
 
-*   **Input:** $X$ (vector de características).
-*   **Output:** $Y$ (etiqueta o valor).
-*   **Hipótesis:** $h \in \mathcal{H}$ (espacio de posibles funciones del modelo).
+*   **Input:** $$X$$ (vector de características).
+*   **Output:** $$Y$$ (etiqueta o valor).
+*   **Hipótesis:** $$h \in \mathcal{H}$$ (espacio de posibles funciones del modelo).
 
 ### 3.2 Error y Generalización
 Para saber si el modelo aprende, distinguimos dos tipos de error:
-1.  **Error en muestra ($E_{in}$):** El error calculado sobre los datos de entrenamiento.
-2.  **Error fuera de muestra ($E_{out}$):** El error sobre datos nuevos (generalización).
+1.  **Error en muestra ($$E_{in}$$):** El error calculado sobre los datos de entrenamiento.
+2.  **Error fuera de muestra ($$E_{out}$$):** El error sobre datos nuevos (generalización).
 
 > **Concepto Crítico (Desigualdad de Hoeffding y Dimensión VC):**
-> El aprendizaje es factible si podemos garantizar que $E_{in} \approx E_{out}$. Esto depende de la complejidad del modelo, medida por la **Dimensión VC ($d_{VC}$)**.
+> El aprendizaje es factible si podemos garantizar que $$E_{in} \approx E_{out}$$. Esto depende de la complejidad del modelo, medida por la **Dimensión VC ($$d_{VC}$$)**.
 >
-> La regla práctica es que necesitamos **10 veces más datos que grados de libertad (parámetros)** ($N > 10 \cdot d_{VC}$) para evitar el sobreajuste y garantizar generalización.
+> La regla práctica es que necesitamos **10 veces más datos que grados de libertad (parámetros)** ($$N > 10 \cdot d_{VC}$$) para evitar el sobreajuste y garantizar generalización.
 
 ---
 
 ## 4. Modelos Lineales y Optimización
 
 ### 4.1 Regresión Lineal
-Buscamos predecir un valor real $y$. El modelo es una combinación lineal de los pesos $w$ y las características $x$:
+Buscamos predecir un valor real $$y$$. El modelo es una combinación lineal de los pesos $$w$$ y las características $$x$$:
 $$h_w(x) = w_0 + w_1x_1 + \dots + w_n x_n = w^T x$$
 
 Para encontrar los mejores pesos, minimizamos el **Error Cuadrático Medio (MSE)**:
@@ -118,7 +118,7 @@ return w
 ## 5. Clasificación y Regularización
 
 ### 5.1 Clasificación Lineal
-Si la salida $Y$ es discreta (ej. $\{-1, +1\}$), usamos un umbral.
+Si la salida $$Y$$ es discreta (ej. $$\{-1, +1\}$$), usamos un umbral.
 *   **Perceptrón:** Usa la función `signo(w^Tx)`.
 *   **Regresión Logística:** Usa la función **Sigmoide** para estimar probabilidades entre 0 y 1:
     $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
@@ -152,9 +152,9 @@ El algoritmo (como ID3 o C4.5) busca el atributo que maximice la **Ganancia de I
 ## Conceptos Clave (Glosario)
 
 *   **Agente Racional:** Sistema que percibe y actúa maximizando su medida de desempeño esperada.
-*   **Dimensión VC ($d_{VC}$):** Medida teórica de la capacidad (complejidad) de un modelo para aprender. A mayor dimensión VC, más datos se necesitan.
-*   **Sobreajuste (Overfitting):** Cuando un modelo aprende el "ruido" de los datos de entrenamiento y falla al predecir nuevos datos ($E_{in}$ bajo, $E_{out}$ alto).
-*   **Regularización:** Técnica matemática (como añadir $\lambda ||w||^2$) para prevenir el sobreajuste penalizando modelos complejos.
+*   **Dimensión VC ($$d_{VC}$$):** Medida teórica de la capacidad (complejidad) de un modelo para aprender. A mayor dimensión VC, más datos se necesitan.
+*   **Sobreajuste (Overfitting):** Cuando un modelo aprende el "ruido" de los datos de entrenamiento y falla al predecir nuevos datos ($$E_{in}$$ bajo, $$E_{out}$$ alto).
+*   **Regularización:** Técnica matemática (como añadir $$\lambda ||w||^2$$) para prevenir el sobreajuste penalizando modelos complejos.
 *   **Gradiente Descendente:** Algoritmo de optimización que ajusta iterativamente los parámetros moviéndose en la dirección opuesta a la pendiente del error.
 *   **Entropía:** En teoría de la información, mide el nivel de desorden o incertidumbre en un conjunto de datos. Usado para construir árboles de decisión.
-*   **Matriz de Diseño ($X$):** Matriz que contiene todos los datos de entrenamiento, donde cada fila es un ejemplo y cada columna una característica (feature).
+*   **Matriz de Diseño ($$X$$):** Matriz que contiene todos los datos de entrenamiento, donde cada fila es un ejemplo y cada columna una característica (feature).
