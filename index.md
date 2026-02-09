@@ -1,13 +1,14 @@
 ---
 layout: default
-title: Notas de Inteligencia Artificial
+title: Notas de Inteligencia Artificial - Daniel Alvarez
 ---
 
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-
 # Notas Inteligencia Artificial
+
+> **Nota sobre el contenido:** Este material fue sintetizado con el apoyo de **NotebookLM**, tomando como base mis apuntes personales y las presentaciones utilizadas en las sesiones de clase.
 
 ## 1. Introducción a la Inteligencia Artificial
 
@@ -18,7 +19,7 @@ Para definir la IA, nos basamos en cuatro enfoques clásicos (según Russell & N
 3.  **Pensar racionalmente:** Leyes del pensamiento (lógica).
 4.  **Actuar racionalmente:** El enfoque del **Agente Racional**.
 
-> **Nota del Experto:** En este curso, nos centramos en la cuarta categoría: la **racionalidad**. Esto implica hacer "lo correcto" para maximizar la utilidad futura, considerando las limitaciones de percepción y cómputo.
+En este curso, nos centramos en la cuarta categoría: la **racionalidad**. Esto implica hacer "lo correcto" para maximizar la utilidad futura, considerando las limitaciones de percepción y cómputo.
 
 ---
 
