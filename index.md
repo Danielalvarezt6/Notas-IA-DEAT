@@ -139,7 +139,7 @@ Esto se llama **Navaja de Ockham**: preferir modelos más simples.
 
 Nueva función de costo a minimizar:
 $$J_{reg}(w) = E_{in}(w) + \lambda \sum w_j^2$$
-*   $\lambda$ (lambda): Controla cuánto penalizamos la complejidad. Si $\lambda$ es muy grande, el modelo será demasiado simple (underfitting); si es 0, es regresión normal.
+*   $$\lambda$$ (lambda): Controla cuánto penalizamos la complejidad. Si $\lambda$ es muy grande, el modelo será demasiado simple (underfitting); si es 0, es regresión normal.
 
 ---
 
