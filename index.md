@@ -126,7 +126,8 @@ Si la salida $$Y$$ es discreta (ej. $$\{-1, +1\}$$), usamos un umbral.
     *Función de costo:* Entropía cruzada (Log Loss), ya que el MSE no es convexo para clasificación.
 
 ### 5.2 Regularización (L2 / Weight Decay)
-Para evitar que el modelo "memorice" los datos (overfitting), penalizamos los pesos grandes. Esto se llama **Navaja de Ockham**: preferir modelos más simples.
+Para evitar que el modelo "memorice" los datos (overfitting), penalizamos los pesos grandes. 
+Esto se llama **Navaja de Ockham**: preferir modelos más simples.
 
 Nueva función de costo a minimizar:
 $$J_{reg}(w) = E_{in}(w) + \lambda \sum w_j^2$$
@@ -155,7 +156,7 @@ El algoritmo (como ID3 o C4.5) busca el atributo que maximice la **Ganancia de I
 *   **Agente Racional:** Sistema que percibe y actúa maximizando su medida de desempeño esperada.
 *   **Dimensión VC ($$d_{VC}$$):** Medida teórica de la capacidad (complejidad) de un modelo para aprender. A mayor dimensión VC, más datos se necesitan.
 *   **Sobreajuste (Overfitting):** Cuando un modelo aprende el "ruido" de los datos de entrenamiento y falla al predecir nuevos datos ($$E_{in}$$ bajo, $$E_{out}$$ alto).
-*   **Regularización:** Técnica matemática (como añadir $$\lambda ||w||^2$$) para prevenir el sobreajuste penalizando modelos complejos.
+*   **Regularización:** Técnica matemática (como añadir $$\lambda o (||w||)^2$$) para prevenir el sobreajuste penalizando modelos complejos.
 *   **Gradiente Descendente:** Algoritmo de optimización que ajusta iterativamente los parámetros moviéndose en la dirección opuesta a la pendiente del error.
 *   **Entropía:** En teoría de la información, mide el nivel de desorden o incertidumbre en un conjunto de datos. Usado para construir árboles de decisión.
 *   **Matriz de Diseño ($$X$$):** Matriz que contiene todos los datos de entrenamiento, donde cada fila es un ejemplo y cada columna una característica (feature).
