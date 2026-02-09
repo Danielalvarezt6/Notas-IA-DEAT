@@ -3,3 +3,8 @@ description: Repositorio de apuntes de Daniel Alvarez - UNISON
 remote_theme: pages-themes/cayman@v0.2.0
 google_analytics:
 show_downloads: true
+markdown: kramdown
+kramdown:
+  math_engine: katex
+  math_engine_opts:
+    cdn: https://cdn.jsdelivr.net/npm/katex@latest/dist/
