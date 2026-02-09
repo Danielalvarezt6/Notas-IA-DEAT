@@ -34,6 +34,8 @@ Un agente es cualquier entidad que percibe su entorno a través de **sensores** 
 *   **A (Actuators):** Mecanismos para actuar (ej. ruedas, motor).
 *   **S (Sensors):** Mecanismos para percibir (ej. cámaras, teclado).
 
+![Diagrama Agente-Entorno](https://www.researchgate.net/profile/Vicente-Julian/publication/230819368/figure/fig1/AS:669424872865793@1536614735070/Figura-1-Vision-esquematica-de-un-Agente-Inteligente.png)
+
 La función del agente mapea el historial de percepciones a acciones:
 $$f: P^* \rightarrow A$$
 
@@ -93,6 +95,12 @@ $$w = (X^T X)^{-1} X^T Y$$
 
 ### 4.2 Descenso del Gradiente (Gradient Descent)
 Es un algoritmo iterativo para minimizar el error cuando no podemos usar la solución analítica.
+Cada modelo tiene una función de pérdida, a veces llamada función de costo. Esta función mide qué tan lejos están las predicciones de un modelo de los puntos de datos reales. 
+La fase de entrenamiento de un modelo está diseñada para encontrar los valores de los parámetros que minimizan esta pérdida. El descenso de gradiente suele ser la técnica de optimización utilizada en el entrenamiento por este motivo. 
+Lo ideal es que la convergencia se produzca en el mínimo global.
+Si la tasa de aprendizaje no es lo suficientemente pequeña, el algoritmo a menudo convergerá en un mínimo local. Una tasa bien elegida es esencial para minimizar la función de pérdida y lograr la convergencia en un mínimo global.
+
+![Descenso de gradiente](https://assets.ibm.com/is/image/ibm/ICLH_Diagram_Batch_03_21-AI-ML-GradientDescent:16x9?fmt=png-alpha&dpr=on%2C1.25&wid=960&hei=540)
 
 **Algoritmo:**
 Repetir hasta convergencia:
@@ -139,12 +147,15 @@ $$J_{reg}(w) = E_{in}(w) + \lambda \sum w_j^2$$
 
 Los árboles de decisión parten el espacio de datos mediante reglas secuenciales. Son fáciles de interpretar por humanos.
 
+![Ejemplo arbol de decision](https://lh6.googleusercontent.com/zBZfWd32HV7q2N7KYpaxmfhXvfF4KPjAkAr4BHPO6UqRtdrRaxi7GlGIdIpCaD847Z06R6twakOS2X-JWXxeuKUHkJHziyRY93xrIbi8iW22N3pxBxUB5-f1j2jj56oDr2HAuDI)
+
+
 ### 6.1 Selección de Atributos (Entropía)
 Para decidir qué pregunta hacer en cada nodo del árbol (ej. "¿Es mayor a 5?"), usamos medidas de pureza como la **Entropía**:
 
 $$H(Y) = - \sum p_i \log_2(p_i)$$
 
-El algoritmo (como ID3 o C4.5) busca el atributo que maximice la **Ganancia de Información (Information Gain)**, es decir, el atributo que más reduzca la entropía (incertidumbre) de los datos resultantes.
+El algoritmo (como ID3) busca el atributo que maximice la **Ganancia de Información (Information Gain)**, es decir, el atributo que más reduzca la entropía (incertidumbre) de los datos resultantes.
 
 > **Problema:** Los árboles tienden a sobreajustarse mucho (aprenden el ruido).
 > **Solución:** Podar el árbol (pruning) o usar bosques aleatorios (Random Forests).
