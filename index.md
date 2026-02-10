@@ -157,12 +157,12 @@ Usamos la función Sigmoide para "aplastar" la salida lineal entre 0 y 1, interp
 
 $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
 
-Donde $$z = w^T x$$.
+Donde $$z = x^T w + b$$.
 
 **Función de Costo (Log Loss):**
 El MSE no es adecuado aquí porque generaría una función "no convexa" (muchos mínimos locales). Usamos *Maximum Likelihood Estimation*:
 
-$$J(w) = - \frac{1}{N} \sum_{i=1}^{N} [y^{(i)} \log(\hat{y}^{(i)}) + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)})]$$
+$$J(w) = - \frac{1}{M} \sum_{i=1}^{M} [a^{(i)} \log(\hat{a}^{(i)}) + (1 - a^{(i)}) \log(1 - \hat{a}^{(i)})]$$
 
 ### 5.2 Regularización (Controlando el Overfitting)
 Para evitar que el modelo "memorice" el ruido de los datos de entrenamiento (**Overfitting**), penalizamos los pesos grandes. Esto aplica el principio de la **Navaja de Ockham**: ante dos modelos con error similar, preferimos el más simple.
@@ -179,7 +179,7 @@ $$J_{reg}(w) = J_{original}(w) + \lambda \cdot R(w)$$
     * **Uso:** Cuando todas las variables aportan algo de información.
 
 2.  **Regularización L1 (Lasso):**
-    * Penalización: $$\lambda \sum |w_j|$$
+    * Penalización: $$\lambda \sum \|w_j\|$$
     * **Efecto:** Puede forzar a que algunos pesos sean **exactamente cero**.
     * **Uso:** Funciona como **selección de características** automática (elimina variables irrelevantes).
 
@@ -214,7 +214,7 @@ El algoritmo (como ID3) busca el atributo que maximice la **Ganancia de Informac
 *   **Agente Racional:** Sistema que percibe y actúa maximizando su medida de desempeño esperada.
 *   **Dimensión VC ($$d_{VC}$$):** Medida teórica de la capacidad (complejidad) de un modelo para aprender. A mayor dimensión VC, más datos se necesitan.
 *   **Sobreajuste (Overfitting):** Cuando un modelo aprende el "ruido" de los datos de entrenamiento y falla al predecir nuevos datos ($$E_{in}$$ bajo, $$E_{out}$$ alto).
-*   **Subajuste (Underfitting):** Cuando el modelo es demasiado simple (baja complejidad) para capturar la estructura subyacente de los datos, resultando en un mal desempeño general ($E_{in}$ alto, $E_{out}$ alto).
+*   **Subajuste (Underfitting):** Cuando el modelo es demasiado simple (baja complejidad) para capturar la estructura subyacente de los datos, resultando en un mal desempeño general ($$E_{in}$$ alto, $$E_{out}$$ alto).
 *   **Regularización:** Técnica matemática (como añadir $$\lambda \|w\|^2$$) para prevenir el sobreajuste penalizando modelos complejos.
 *   **Descenso del Gradiente:** Algoritmo de optimización que ajusta iterativamente los parámetros moviéndose en la dirección opuesta a la pendiente del error.
 *   **Entropía:** En teoría de la información, mide el nivel de desorden o incertidumbre en un conjunto de datos. Usado para construir árboles de decisión.
