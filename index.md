@@ -97,7 +97,7 @@ Buscamos predecir un valor real $$y$$. El modelo es una combinación lineal de l
 $$h_w(x) = w_0 + w_1x_1 + \dots + w_n x_n = w^T x$$
 
 Para encontrar los mejores pesos, minimizamos el **Error Cuadrático Medio (MSE)**:
-$$J(w) = \frac{1}{N} \sum_{i=1}^{N} (h_w(x^{(i)}) - y^{(i)})^2$$
+$$J(w) = \frac{1}{M} \sum_{i=1}^{M} (h_w(x^{(i)}) - y^{(i)})^2$$
 
 **Solución Analítica (Ecuación Normal):**
 $$w = (X^T X)^{-1} X^T Y$$
@@ -184,7 +184,7 @@ $$J_{reg}(w) = J_{original}(w) + \lambda \cdot R(w)$$
     * **Uso:** Funciona como **selección de características** automática (elimina variables irrelevantes).
 
 > **Hiperparámetro $$\lambda$$:** Controla la fuerza de la penalización.
-> * $$\lambda$$muy grande$$\to$$ Underfitting (modelo demasiado simple).
+> * $$\lambda$$ muy grande $$\to$$ Underfitting (modelo demasiado simple).
 > * $$\lambda = 0$$ $$\to$$ Regresión estándar (riesgo de Overfitting).
 
 ***
