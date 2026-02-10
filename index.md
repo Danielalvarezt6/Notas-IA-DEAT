@@ -33,7 +33,7 @@ Un agente es cualquier entidad que percibe su entorno a través de **sensores** 
 *   **A (Actuators):** Mecanismos para actuar (ej. ruedas, motor).
 *   **S (Sensors):** Mecanismos para percibir (ej. cámaras, teclado).
 
-![Diagrama Agente-Entorno](https://www.researchgate.net/profile/Vicente-Julian/publication/230819368/figure/fig1/AS:669424872865793@1536614735070/Figura-1-Vision-esquematica-de-un-Agente-Inteligente.png)
+![Diagrama Agente-Entorno](https://acumbamail.com/blog/wp-content/uploads/2025/01/agente-ia.png)
 
 La función del agente mapea el historial de percepciones a acciones:
 $$f: P^* \rightarrow A$$
