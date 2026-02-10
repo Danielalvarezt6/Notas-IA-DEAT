@@ -4,7 +4,6 @@ title: Notas de Inteligencia Artificial - Daniel Alvarez
 math: true
 ---
 
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 # Notas Inteligencia Artificial
@@ -61,17 +60,28 @@ Según su complejidad interna, los agentes se clasifican en:
 
 ## 3. Teoría del Aprendizaje (Learning Theory)
 
-### 3.1 El Problema del Aprendizaje Supervisado
-El objetivo es encontrar una función (hipótesis) $$h$$ que se aproxime a una función desconocida $$f$$ (la realidad), tal que $$h(x) \approx f(x)$$, utilizando un conjunto de datos de entrenamiento $$D$$.
+### 3.1 Aprendizaje Supervisado
+Es una técnica de *Machine Learning* donde el modelo aprende a partir de un conjunto de datos **etiquetados**. Estos datos proporcionan una **"Verdad Fundamental" (Ground Truth)**, que actúa como un guía o "profesor" para el algoritmo.
 
-*   **Input:** $$X$$ (vector de características).
-*   **Output:** $$Y$$ (etiqueta o valor).
-*   **Hipótesis:** $$h \in \mathcal{H}$$ (espacio de posibles funciones del modelo).
+* **El objetivo:** Crear una función (hipótesis) $$h$$ que se aproxime a una función desconocida $$f$$ (la realidad), tal que $$h(x) \approx f(x)$$, utilizando un conjunto de entrenamiento $$D$$.
+* **Funcionamiento:** El modelo hace predicciones, mide el error respecto a la etiqueta real (usando una **función de pérdida**) y ajusta sus parámetros para minimizar dicha discrepancia.
 
 ### 3.2 Error y Generalización
 Para saber si el modelo aprende, distinguimos dos tipos de error:
 1.  **Error en muestra ($$E_{in}$$):** El error calculado sobre los datos de entrenamiento.
-2.  **Error fuera de muestra ($$E_{out}$$):** El error sobre datos nuevos (generalización).
+2.  **Error fuera de muestra ($$E_{out}$$):** El error sobre datos nuevos (**generalización**).
+
+
+
+### 3.3 Overfitting vs. Underfitting
+El éxito del aprendizaje supervisado depende de encontrar el equilibrio entre la complejidad del modelo y la cantidad de datos.
+
+* **Underfitting (Subajuste):** Ocurre cuando el modelo es demasiado simple para capturar la estructura de los datos.
+    * *Resultado:* $$E_{in}$$ alto y $$E_{out}$$ alto. El modelo ni siquiera aprende los datos de entrenamiento.
+* **Overfitting (Sobreajuste):** Ocurre cuando el modelo es demasiado complejo y empieza a memorizar el **ruido** y detalles irrelevantes del entrenamiento.
+    * *Resultado:* $$E_{in}$$ muy bajo, pero $$E_{out}$$ muy alto. El modelo falla al generalizar con datos nuevos.
+ 
+![Diagrama](https://datahacker.rs/wp-content/uploads/2021/11/Picture3-1536x522.jpg)
 
 > **Concepto Crítico (Desigualdad de Hoeffding y Dimensión VC):**
 > El aprendizaje es factible si podemos garantizar que $$E_{in} \approx E_{out}$$. Esto depende de la complejidad del modelo, medida por la **Dimensión VC ($$d_{VC}$$)**.
@@ -94,18 +104,23 @@ $$w = (X^T X)^{-1} X^T Y$$
 *Nota: Si la matriz es muy grande, invertirla es costoso computacionalmente.*
 
 ### 4.2 Descenso del Gradiente (Gradient Descent)
-Es un algoritmo iterativo para minimizar el error cuando no podemos usar la solución analítica.
-Cada modelo tiene una función de pérdida, a veces llamada función de costo. Esta función mide qué tan lejos están las predicciones de un modelo de los puntos de datos reales. 
-La fase de entrenamiento de un modelo está diseñada para encontrar los valores de los parámetros que minimizan esta pérdida. El descenso de gradiente suele ser la técnica de optimización utilizada en el entrenamiento por este motivo. 
-Lo ideal es que la convergencia se produzca en el mínimo global.
-Si la tasa de aprendizaje no es lo suficientemente pequeña, el algoritmo a menudo convergerá en un mínimo local. Una tasa bien elegida es esencial para minimizar la función de pérdida y lograr la convergencia en un mínimo global.
+Es un algoritmo de optimización iterativo de primer orden utilizado para encontrar los mínimos locales de una función diferenciable. Es el método estándar para entrenar modelos cuando la solución analítica es computacionalmente intratable.
+
+* **Fundamento Matemático:** El algoritmo se basa en la observación de que una función multivariable $$J(w)$$ disminuye más rápidamente si se avanza en la dirección del **gradiente negativo** del punto actual.
+* **El Gradiente ($$\nabla J(w)$$):** Es un vector que contiene todas las derivadas parciales de la función de costo. Matemáticamente, este vector apunta hacia la dirección de mayor crecimiento de la función; por lo tanto, nos movemos en la dirección opuesta ($$-\nabla$$) para minimizar el error.
+* **Objetivo:** Determinar los parámetros óptimos $$w$$que minimizan la función de costo$$J(w)$$, convergiendo iterativamente hacia un punto donde el gradiente es cero (o muy cercano a cero).
+
+**Algoritmo de Actualización:**
+Se repite el siguiente paso hasta satisfacer un criterio de parada (convergencia):
+
+$$w_j \leftarrow w_j - \eta \frac{\partial J(w)}{\partial w_j}$$
+
+Donde:
+* $$w_j$$: Es el peso o parámetro a actualizar.
+* $$\eta$$ (Eta): Es la **tasa de aprendizaje (learning rate)**, un hiperparámetro escalar que determina la magnitud del paso en cada iteración.
+* $$\frac{\partial J(w)}{\partial w_j}$$: Es la derivada parcial (el gradiente) respecto al peso $$w_j$$.
 
 ![Descenso de gradiente](https://assets.ibm.com/is/image/ibm/ICLH_Diagram_Batch_03_21-AI-ML-GradientDescent:16x9?fmt=png-alpha&dpr=on%2C1.25&wid=960&hei=540)
-
-**Algoritmo:**
-Repetir hasta convergencia:
-$$w_j \leftarrow w_j - \eta \frac{\partial J(w)}{\partial w_j}$$
-Donde $\eta$ es la **tasa de aprendizaje (learning rate)**.
 
 *Bloque de código conceptual (basado en notas):*
 ```python
@@ -123,25 +138,57 @@ return w
 ```
 
 ---
+# 5. Clasificación y Regularización
 
-## 5. Clasificación y Regularización
+### 5.1 Clasificación Lineal vs. Regresión Logística
+A diferencia de la regresión lineal, la clasificación predice etiquetas discretas o probabilidades de pertenencia a una clase.
 
-### 5.1 Clasificación Lineal
-Si la salida $$Y$$ es discreta (ej. $$\{-1, +1\}$$), usamos un umbral.
-*   **Perceptrón:** Usa la función `signo(w^Tx)`.
-*   **Regresión Logística:** Usa la función **Sigmoide** para estimar probabilidades entre 0 y 1:
-    $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
-    *Función de costo:* Entropía cruzada (Log Loss), ya que el MSE no es convexo para clasificación.
+**Tabla Comparativa:**
 
-### 5.2 Regularización (L2 / Weight Decay)
-Para evitar que el modelo "memorice" los datos (overfitting), penalizamos los pesos grandes. 
-Esto se llama **Navaja de Ockham**: preferir modelos más simples.
+| Característica | Regresión Lineal | Regresión Logística |
+| :--- | :--- | :--- |
+| **Variable Objetivo** | Continua (ej. $$24.5^{\circ}C$$) | Categórica / Probabilidad (ej. Spam/No Spam) |
+| **Rango de Salida** | $$(-\infty, +\infty)$$|$$[0, 1]$$ |
+| **Relación** | Lineal | No lineal (Sigmoide) |
+| **Función de Costo** | MSE (Convexa para regresión) | Entropía Cruzada / Log Loss (Convexa para clasificación) |
+
+**El Modelo Logístico (Sigmoide):**
+Usamos la función Sigmoide para "aplastar" la salida lineal entre 0 y 1, interpretándola como una probabilidad:
+
+$$\sigma(z) = \frac{1}{1 + e^{-z}}$$
+
+Donde $$z = w^T x$$.
+
+**Función de Costo (Log Loss):**
+El MSE no es adecuado aquí porque generaría una función "no convexa" (muchos mínimos locales). Usamos *Maximum Likelihood Estimation*:
+
+$$J(w) = - \frac{1}{N} \sum_{i=1}^{N} [y^{(i)} \log(\hat{y}^{(i)}) + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)})]$$
+
+### 5.2 Regularización (Controlando el Overfitting)
+Para evitar que el modelo "memorice" el ruido de los datos de entrenamiento (**Overfitting**), penalizamos los pesos grandes. Esto aplica el principio de la **Navaja de Ockham**: ante dos modelos con error similar, preferimos el más simple.
 
 Nueva función de costo a minimizar:
-$$J_{reg}(w) = E_{in}(w) + \lambda \sum w_j^2$$
-*   $$\lambda$$ (lambda): Controla cuánto penalizamos la complejidad. Si $$\lambda$$ es muy grande, el modelo será demasiado simple (underfitting); si es 0, es regresión normal.
 
----
+$$J_{reg}(w) = J_{original}(w) + \lambda \cdot R(w)$$
+
+**Tipos de Regularización:**
+
+1.  **Regularización L2 (Ridge):**
+    * Penalización: $$\lambda \sum w_j^2$$
+    * **Efecto:** Reduce todos los pesos uniformemente hacia cero (weight decay), pero raramente los hace cero exacto.
+    * **Uso:** Cuando todas las variables aportan algo de información.
+
+2.  **Regularización L1 (Lasso):**
+    * Penalización: $$\lambda \sum |w_j|$$
+    * **Efecto:** Puede forzar a que algunos pesos sean **exactamente cero**.
+    * **Uso:** Funciona como **selección de características** automática (elimina variables irrelevantes).
+
+> **Hiperparámetro $$\lambda$$:** Controla la fuerza de la penalización.
+> * $$\lambda$$muy grande$$\to$$ Underfitting (modelo demasiado simple).
+> * $$\lambda = 0$$ $$\to$$ Regresión estándar (riesgo de Overfitting).
+
+***
+*Fuente complementaria: [Diferencias entre Regresión Lineal y Logística (AWS)](https://aws.amazon.com/es/compare/the-difference-between-linear-regression-and-logistic-regression/)*
 
 ## 6. Árboles de Decisión
 
@@ -167,6 +214,7 @@ El algoritmo (como ID3) busca el atributo que maximice la **Ganancia de Informac
 *   **Agente Racional:** Sistema que percibe y actúa maximizando su medida de desempeño esperada.
 *   **Dimensión VC ($$d_{VC}$$):** Medida teórica de la capacidad (complejidad) de un modelo para aprender. A mayor dimensión VC, más datos se necesitan.
 *   **Sobreajuste (Overfitting):** Cuando un modelo aprende el "ruido" de los datos de entrenamiento y falla al predecir nuevos datos ($$E_{in}$$ bajo, $$E_{out}$$ alto).
+*   **Subajuste (Underfitting):** Cuando el modelo es demasiado simple (baja complejidad) para capturar la estructura subyacente de los datos, resultando en un mal desempeño general ($E_{in}$ alto, $E_{out}$ alto).
 *   **Regularización:** Técnica matemática (como añadir $$\lambda \|w\|^2$$) para prevenir el sobreajuste penalizando modelos complejos.
 *   **Descenso del Gradiente:** Algoritmo de optimización que ajusta iterativamente los parámetros moviéndose en la dirección opuesta a la pendiente del error.
 *   **Entropía:** En teoría de la información, mide el nivel de desorden o incertidumbre en un conjunto de datos. Usado para construir árboles de decisión.
