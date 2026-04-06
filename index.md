@@ -8,7 +8,7 @@ math: true
 
 # Notas Inteligencia Artificial
 
-> **Nota sobre el contenido:** Este material fue sintetizado con el apoyo de **NotebookLM**, tomando como base mis apuntes personales y las presentaciones utilizadas en las sesiones de clase. Las secciones de búsqueda, juegos adversarios y MDP siguen el desarrollo visto en el cuatrimestre (notas desde enero–marzo de 2026).
+> **Nota sobre el contenido:** Este material fue sintetizado con el apoyo de **NotebookLM**, tomando como base mis apuntes personales y las presentaciones utilizadas en las sesiones de clase. (enero–marzo de 2026)
 
 ## 1. Introducción a la Inteligencia Artificial
 
@@ -159,6 +159,12 @@ for epoch in range(max_epochs):
 return w
 ```
 
+### 4.3 Características (*features*), plantillas y no linealidad
+En la práctica el modelo no actúa sobre $$x$$ crudo sino sobre un vector de características $$\phi(x)$$. La **extracción de características** usa conocimiento del dominio; el **aprendizaje** elige pesos $$w$$ dentro de una familia acotada. Se busca que el conjunto de hipótesis $$\mathcal{F} = \{ f_w : f_w(x) = \text{sign}(w \cdot \phi(x)) \}$$ contenga buenos predictores sin ser demasiado grande.
+
+* **Plantillas de características (*feature templates*):** Agrupan muchas características generadas con la misma regla (por ejemplo, “los tres últimos caracteres del correo son *aaa*, *aab*, …, *com*”). Se definen **tipos** de patrón, no un patrón aislado; el vector resultante suele ser **disperso**: conviene representarlo como diccionario `{"endsWith com": 1}` en lugar de un arreglo denso enorme.
+* **Características no lineales en $$x$$, lineales en $$w$$:** Con $$\phi(x) = [1, x, x^2]$$ la predicción $$w \cdot \phi(x)$$ es un polinomio en $$x$$, pero sigue siendo lineal en $$w$$ (misma maquinaria de optimización). Otros ejemplos: **funciones constantes por tramos** (indicadores de intervalos), términos **periódicos** como $$\cos(\omega x)$$, o en clasificación $$\phi(x) = [x_1, x_2, x_1^2 + x_2^2]$$ para que el límite de decisión sea un **círculo** en el plano original pero un **hiperplano** en el espacio de características.
+
 ---
 # 5. Clasificación y Regularización
 
@@ -240,27 +246,55 @@ En la práctica, variantes como **CART** pueden entrenar más lento que un solo 
 
 ## 7. Búsqueda y planeación en espacios de estados
 
-Un **problema de búsqueda** (espacio finito) se define con: conjunto de **estados** $$S$$, **acciones** legales $$A(s)$$, **modelo de transición** $$\text{Succ}(s,a)$$, **costo local** $$c(s,a)$$, **estado inicial** y **estados meta** (o condición $$\text{Terminal}(s)$$). Un **plan** es una secuencia $$(s_0,a_0,s_1,\ldots)$$ tal que $$s_{i+1} = \text{Succ}(s_i, a_i)$$ y el **costo total** es la suma de costos locales; se busca un plan de **costo mínimo**.
+Un **problema de búsqueda** se especifica con: estado inicial $$s_{\text{start}}$$, conjunto de **acciones** $$\text{Actions}(s)$$, **sucesor** $$\text{Succ}(s,a)$$, **costo** $$\text{Cost}(s,a)$$ (o costo de la transición), y prueba de fin $$\text{IsEnd}(s)$$. Una **solución** es una **secuencia de acciones** (un plan) que lleva al objetivo; a diferencia de un clasificador “reflejo” $$x \mapsto y$$, aquí hay que valorar **consecuencias futuras** de cada acción.
 
-La **búsqueda genérica** mantiene una **frontera** de nodos (cada nodo guarda estado, padre, acción y costo acumulado), expande sucesores y detiene al alcanzar un estado terminal. Si el grafo de estados tiene **ciclos** o estados repetidos, conviene tratarlo como **búsqueda en grafo** y usar un conjunto de estados ya visitados (en Python, un `set`) para no explotar el tiempo.
+A cada problema le corresponde un **grafo de espacio de estados** (arcos = transiciones); suele ser enorme o infinito, así que **no** se materializa completo: se explora **bajo demanda**. En el **árbol de búsqueda**, cada **nodo** representa un **camino** (secuencia de acciones) hasta un estado; el mismo estado puede aparecer en varios nodos. La **frontera** (*frontier* / *fringe*) almacena nodos aún no expandidos; la **estrategia** decide cuál expandir.
 
-* **Factor de ramificación** $$b$$ y profundidad afectan la **complejidad temporal y espacial** de los algoritmos (crecimiento típico en $$O(b^d)$$ en el peor caso para búsqueda en profundidad).
-* Ejemplos vistos en clase: **Torres de Hanoi**, **puzzle deslizable** (8-puzzle), representación del estado del cubo de Rubik.
+### 7.1 Tipos de problema (visión rápida)
+Según observabilidad e incertidumbre: determinista y totalmente observable (un solo estado de creencia), **sin sensores** (*sensorless* / *conformant*), **parcialmente observable o no determinista** (planes contingentes, a veces intercalar búsqueda y ejecución), o **espacio desconocido** (exploración primero). Las aplicaciones van de rutas y planificación de movimiento hasta traducción automática modelada como secuencias de acciones.
 
-### 7.1 Búsqueda informada y $$A^*$$
-Una **heurística** $$h(n)$$ estima el costo desde el estado del nodo $$n$$ hasta la meta. Si $$h$$ nunca **sobrestima** el costo real, es **admisible**; entonces $$A^*$$ con $$f(n) = g(n) + h(n)$$ ($$g$$ = costo desde el inicio) encuentra solución **óptima** cuando existe. Con información extra útil en el problema, $$A^*$$ (o variantes) suele ser la mejor opción frente a búsqueda ciega.
+### 7.2 Búsqueda en profundidad, amplitud y en grafo
+* **DFS:** frontera tipo **pila** (LIFO); explora primero lo más profundo.
+* **BFS:** frontera tipo **cola** (FIFO); encuentra el camino con **menos pasos** si todas las acciones cuestan lo mismo, pero **no** minimiza costo general con acciones de costo distinto.
+* **Grafo vs árbol:** sin detectar **estados repetidos**, el trabajo puede crecer exponencialmente (“quien no recuerda el pasado…”). La **búsqueda en grafo** mantiene un conjunto de estados ya **explorados** (`set` / diccionario) y evita reexpandir el mismo estado.
+
+### 7.3 Búsqueda de costo uniforme (UCS)
+**Uniform Cost Search** expande siempre el nodo de **menor costo acumulado** $$g(n)$$; la frontera es una **cola de prioridad**. Con costos no negativos es **completa** y **óptima**, pero explora en **contornos de costo** crecientes “en todas direcciones” si no hay información del objetivo.
+
+### 7.4 Heurísticas, *greedy* y $$A^*$$
+Una **heurística** $$h(n)$$ estima el costo restante hasta una meta (p. ej. distancia Manhattan o euclidiana en un mapa). La **búsqueda *greedy* best-first*** expande el nodo con menor $$h$$; puede **fallar** y no ser óptima.
+
+**$$A^*$$** combina el costo de llegar al nodo y la estimación al frente:
+
+$$f(n) = g(n) + h(n)$$
+
+* $$h$$ es **admisible** si **nunca sobrestima** el costo real restante hasta la meta (es “optimista”). Con admisibilidad y costos no negativos, $$A^*$$ es óptimo si se declara éxito al **sacar** de la frontera un nodo objetivo (no basta con solo **encolar** un objetivo).
+* **UCS** es $$A^*$$ con $$h \equiv 0$$: expande en círculos de costo; $$A^*$$ se “estira” hacia la meta pero mantiene garantías si $$h$$ es admisible.
+* Heurísticas **consistentes** (o monótonas) implican $$h(n) \leq c(n,n') + h(n')$$ para sucesores; en la práctica, muchas heurísticas admisibles útiles son consistentes.
+* Heurísticas suelen diseñarse como solución de un **problema relajado** (más acciones permitidas). En el **8-puzzle**, contar **fichas mal colocadas** o la **distancia Manhattan** son ejemplos; la Manhattan **domina** a la de fichas mal puestas (explora menos nodos). El **máximo** de varias heurísticas admisibles sigue siendo admisible.
+
+* **Factor de ramificación** $$b$$ y profundidad $$m$$ escalan coste típico $$O(b^m)$$ en exploración exhaustiva del árbol.
+* Ejemplos: **Torres de Hanoi**, **8-puzzle**, **cubo de Rubik** (estado y movimientos como acciones).
 
 ---
 
 ## 8. Juegos de suma cero y adversarios
 
-En **juegos de dos jugadores y suma cero**, un jugador maximiza una utilidad y el otro la minimiza; el entorno es **dinámico** y **determinista** (en la versión básica), con turnos alternados.
+Un **juego** es un entorno con **más de un agente**. Los ejes que lo clasifican incluyen: determinista o estocástico, **información perfecta** (totalmente observable) o no, dos o más jugadores, **suma cero** (utilidades opuestas: uno maximiza, el otro minimiza) frente a **suma general** (utilidades independientes: cooperación, indiferencia, competencia) o juegos en **equipos**.
 
-* **Minimax** explora el árbol de juego hasta estados terminales (o hasta profundidad máxima) y propaga valores hacia arriba. Complejidad en el peor caso del orden $$O(b^{d_{\max}})$$.
-* **Poda $$\alpha$$–$$\beta$$** elimina ramas que no pueden mejorar el resultado ya garantizado por otra jugada; con **ordenamiento de jugadas** favorable se hacen más cortes.
-* **Negamax** reescribe min/max usando $$\min(x,y) = -\max(-x,-y)$$, unificando el código para ambos lados.
+Formalización habitual (determinista, por turnos): conjunto de **estados** con un inicial $$s_0$$, **jugadores** que alternan, **acciones** (posiblemente distintas por jugador/estado), función de **transición** $$S \times A \to S$$, test **terminal**, y **utilidades terminales** $$S \times P \to \mathbb{R}$$. Una **estrategia** (*policy*) recomienda una acción en cada estado donde le toca al jugador.
 
-Técnicas adicionales en juegos complejos (ajedrez): **tablas de transposición** (cacheo de estados ya evaluados), **búsqueda quiescente** (seguir explorando mientras el material o la posición cambian mucho), **libros de apertura** y **bases de datos de finales**. Las **heurísticas** suelen combinar material, control del centro, seguridad del rey, etc.
+### 8.1 Minimax y complejidad
+En juegos **deterministas de suma cero** (gato, ajedrez, damas), el valor **minimax** de un nodo es la mejor utilidad alcanzable contra un adversario **óptimo**. Se implementa con un DFS sobre el árbol de juego. En el peor caso, **tiempo y espacio** $$O(b^m)$$ si $$b$$ es el factor de ramificación y $$m$$ la profundidad del árbol.
+
+### 8.2 Poda $$\alpha$$–$$\beta$$ y límites de profundidad
+La **poda $$\alpha$$–$$\beta$$** no cambia el valor minimax en la **raíz** (la mejor jugada para el jugador raíz), aunque valores intermedios puedan quedar incorrectos. $$\alpha$$ resume la mejor opción garantizada para **MAX** en el camino; $$\beta$$ la de **MIN**. Con **orden de generación** de sucesores ideal, el tiempo puede bajar a del orden de $$O(b^{m/2})$$ en el mejor caso (dobla en la práctica la profundidad alcanzable).
+
+En juegos reales **no** se llega a hojas: se usa **profundidad limitada** y una **función de evaluación** en nodos no terminales (a menudo **combinación lineal ponderada de características** del tablero; también redes neuronales entrenadas por autojuego). Cuanto **más profunda** la búsqueda, menos pesa la imperfección de la evaluación. **Profundización iterativa** da un algoritmo *anytime*. La evaluación puede guiar el **orden** de expansiones para favorecer la poda (análogo a cómo una heurística ayuda a $$A^*$$).
+
+* **Negamax** reescribe $$\min(x,y) = -\max(-x,-y)$$ y unifica el código para ambos bandos.
+
+Técnicas adicionales (ajedrez y similares): **tablas de transposición**, **búsqueda quiescente** ante tácticas violentas, **libros de apertura** y **bases de finales**.
 
 ---
 
@@ -268,9 +302,51 @@ Técnicas adicionales en juegos complejos (ajedrez): **tablas de transposición*
 
 Una **cadena de Markov** (por ejemplo de primer orden) satisface que el futuro depende del presente, no de toda la historia: $$P(X_{t+1} \mid X_0,\ldots,X_t) = P(X_{t+1} \mid X_t)$$. Sirve como base para **series de tiempo**, filtrado y pronóstico (*forecasting*).
 
-Un **MDP** extiende el modelo con **acciones** y **recompensas** $$R(s,a,s')$$; suele usarse un **factor de descuento** $$\gamma \in (0,1]$$ para valorar utilidades futuras. La **función valor** $$V^\pi(s)$$ mide el retorno esperado siguiendo la política $$\pi$$; existe una **política óptima** $$\pi^*$$ que maximiza el valor en cada estado (bajo condiciones habituales).
+### 9.1 De la búsqueda determinista al MDP
+En un problema de **búsqueda** clásico, $$\text{Succ}(s,a)$$ da un único siguiente estado y el costo reemplaza a la recompensa. En un **MDP**, la acción produce una **distribución** sobre siguientes estados:
 
-Las **ecuaciones de optimalidad de Bellman** relacionan $$V^*$$ y la función **$$Q^*(s,a)$$** (valor de tomar $$a$$ en $$s$$ y actuar óptimo después). Algoritmos como **iteración de valor** o **iteración de política** (programación dinámica) aproximan $$\pi^*$$ y $$Q$$ cuando el modelo es conocido; la idea codificada en clase actualiza $$Q(s,a)$$ con expectativas sobre transiciones y máximo sobre acciones en el siguiente estado.
+| Búsqueda | MDP |
+| :--- | :--- |
+| $$\text{Succ}(s,a)$$ determinista | Probabilidades $$T(s,a,s') = P(s' \mid s,a)$$ |
+| Costo de acción | Recompensa $$R(s,a,s')$$ (o $$R(s,a)$$ según notación) |
+
+Para cada par $$(s,a)$$, las probabilidades de transición suman $$1$$: $$\sum_{s'} T(s,a,s') = 1$$. Los **sucesores** son los $$s'$$ con $$T(s,a,s') > 0$$.
+
+Un MDP queda definido por: conjunto de **estados**, acciones $$\text{Actions}(s)$$, $$T(s,a,s')$$, recompensa de transición, $$\text{IsEnd}(s)$$ y **factor de descuento** $$\gamma \in [0,1]$$ (típicamente $$\gamma = 1$$ solo si el horizonte es finito y está bien definido; si no, $$\gamma < 1$$ ayuda a la convergencia).
+
+### 9.2 Política, utilidad y valor esperado
+Una **política** $$\pi$$ asigna una acción a cada estado (donde corresponda). Siguiendo $$\pi$$ se obtiene un **camino aleatorio**; la **utilidad** del camino es la suma **descontada** de recompensas:
+
+$$u = r_1 + \gamma r_2 + \gamma^2 r_3 + \cdots$$
+
+* $$\gamma \to 1$$ valora mucho el futuro; $$\gamma \to 0$$ “solo el momento presente”.
+
+El **valor de $$\pi$$** en $$s$$ es la **utilidad esperada** desde $$s$$:
+
+$$V^\pi(s) = \mathbb{E}[\text{utilidad} \mid \pi, s]$$
+
+Los valores **$$Q^\pi(s,a)$$** son la utilidad esperada tras tomar $$a$$ en $$s$$ y seguir $$\pi$$. Para estados no finales, valen las recurrencias (esquema):
+
+$$Q^\pi(s,a) = \sum_{s'} T(s,a,s')\bigl[R(s,a,s') + \gamma V^\pi(s')\bigr], \qquad
+V^\pi(s) = Q^\pi(s,\pi(s)) \ \ (\text{si no es estado final}).$$
+
+**Evaluación de políticas:** se inicializan valores y se iteran las ecuaciones hasta que el cambio máximo sea menor que un umbral $$\varepsilon$$. Coste típico por iteración del orden de $$O(|S| \cdot |A| \cdot S')$$ con $$S'$$ sucesores no nulos por par $$(s,a)$$.
+
+### 9.3 Valor óptimo e iteración de valor (Bellman)
+El **valor óptimo** cumple:
+
+$$Q_{\text{opt}}(s,a) = \sum_{s'} T(s,a,s')\bigl[R(s,a,s') + \gamma V_{\text{opt}}(s')\bigr], \qquad
+V_{\text{opt}}(s) = \max_{a \in \text{Actions}(s)} Q_{\text{opt}}(s,a)$$
+
+La **política óptima** (greedy respecto a $$Q_{\text{opt}}$$) es $$\pi_{\text{opt}}(s) \in \arg\max_a Q_{\text{opt}}(s,a)$$.
+
+**Iteración de valor:** inicializar $$V(s)$$ (p. ej. $$0$$) y repetir
+
+$$V^{(t)}(s) \leftarrow \max_{a} \sum_{s'} T(s,a,s')\bigl[R(s,a,s') + \gamma V^{(t-1)}(s')\bigr]$$
+
+hasta convergencia. **Convergencia** habitual si $$\gamma < 1$$ o si el grafo del MDP es **acíclico**; con $$\gamma = 1$$ y recompensas nulas puede no converger en ciclos.
+
+**Idea unificadora (programación dinámica):** la búsqueda con DP calcula costos futuros mínimos en grafos; la **evaluación de políticas** calcula $$V^\pi$$; la **iteración de valor** calcula $$V_{\text{opt}}$$. El patrón es escribir la recurrencia y convertirla en asignaciones iterativas hasta converger.
 
 ---
 
@@ -284,6 +360,9 @@ Las **ecuaciones de optimalidad de Bellman** relacionan $$V^*$$ y la función **
 *   **Descenso del Gradiente:** Algoritmo de optimización que ajusta iterativamente los parámetros moviéndose en la dirección opuesta a la pendiente del error.
 *   **Entropía:** En teoría de la información, mide el nivel de desorden o incertidumbre en un conjunto de datos. Usado para construir árboles de decisión.
 *   **Matriz de Diseño ($$X$$):** Matriz que contiene todos los datos de entrenamiento, donde cada fila es un ejemplo y cada columna una característica (feature).
-*   **Heurística admisible:** Estimación del costo a la meta que no sobrestima el costo real; condición clave para optimalidad de $$A^*$$ con costos no negativos.
+*   **Heurística admisible:** Estimación del costo a la meta que no sobrestima el costo real.
 *   **MDP:** Modelo con estados, acciones, transiciones (posiblemente estocásticas) y recompensas; la política óptima maximiza el retorno esperado descontado.
 *   **Poda $$\alpha$$–$$\beta$$:** Técnica que reduce nodos explorados en minimax sin cambiar el resultado en juegos de suma cero con utilidad exacta en hojas.
+*   **UCS (Uniform Cost Search):** Búsqueda que expande por menor costo acumulado $$g$$; óptima con costos no negativos.
+*   **Transición $$T(s,a,s')$$:** En MDPs, probabilidad de llegar a $$s'$$ tras $$a$$ en $$s$$; generaliza al sucesor único de la búsqueda clásica.
+*   **Iteración de valor:** Algoritmo de Bellman que actualiza $$V(s)$$ con el máximo sobre acciones de la expectativa de recompensa más $$V$$ descontado en sucesores.
