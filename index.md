@@ -8,7 +8,7 @@ math: true
 
 # Notas Inteligencia Artificial
 
-> **Nota sobre el contenido:** Este material fue sintetizado con el apoyo de **NotebookLM**, tomando como base mis apuntes personales y las presentaciones utilizadas en las sesiones de clase.
+> **Nota sobre el contenido:** Este material fue sintetizado con el apoyo de **NotebookLM**, tomando como base mis apuntes personales y las presentaciones utilizadas en las sesiones de clase. Las secciones de búsqueda, juegos adversarios y MDP siguen el desarrollo visto en el cuatrimestre (notas desde enero–marzo de 2026).
 
 ## 1. Introducción a la Inteligencia Artificial
 
@@ -56,6 +56,26 @@ Según su complejidad interna, los agentes se clasifican en:
 *   **Agentes basados en Metas (Goal-based):** Actúan para alcanzar un estado final deseado.
 *   **Agentes basados en Utilidad:** Intentan maximizar una función de "felicidad" o preferencia numérica.
 
+Un **agente reflexivo** puede implementarse como $$a_t = f(p_t)$$ o, con estado interno, $$a_t = f(p_t, s_t)$$, actualizando $$s_t$$ antes de decidir (por ejemplo, recordando la percepción anterior para comparar).
+
+### 2.4 Estado, representación y espacio de búsqueda
+El **estado** suele codificarse como un vector $$s = (s_1, \ldots, s_n)$$ cuyas componentes son **variables de estado** (posición, inventario, etc.). Las propiedades del entorno (estático/dinámico, discreto/continuo, observable o no, determinista/estocástico, episódico/secuencial) determinan cómo se actualiza el estado: en lo determinista, $$s_{k+1} = f(s_k, a_k)$$; con incertidumbre se usan modelos probabilísticos sobre transiciones.
+
+El **cardinal** del espacio de estados crece muy rápido; en problemas combinatorios puede ser astronómicamente grande, lo que motiva algoritmos de búsqueda e inteligentes en lugar de enumeración exhaustiva.
+
+### 2.5 Mapa temático del curso (visión global)
+Según las notas, los temas se articulan de lo más abstracto y estructurado hacia aplicaciones con incertidumbre y conocimiento:
+
+* **Aprendizaje automático** y **búsqueda** en espacios de estados finitos.
+* **Juegos** (deterministas) y **MDP / juegos estocásticos** cuando hay azar.
+* **Problemas de satisfacción de restricciones (CSP)** y **optimización**.
+* **Sistemas basados en conocimiento** (representación e inferencia).
+
+---
+
+### 2.6 Sistemas basados en conocimiento
+Además del enfoque numérico $$f(x)$$ típico del aprendizaje supervisado, se trabaja el paradigma **declarativo**: una **base de conocimiento** (reglas y relaciones) y una **base de hechos** sobre el mundo actual, consultadas por un **motor de inferencia** que deduce respuestas. El entorno puede modelarse de forma **orientada a objetos** (propiedades como datos, métodos que dependen del estado) para organizar el código del agente.
+
 ---
 
 ## 3. Teoría del Aprendizaje (Learning Theory)
@@ -65,6 +85,8 @@ Es una técnica de *Machine Learning* donde el modelo aprende a partir de un con
 
 * **El objetivo:** Crear una función (hipótesis) $$h$$ que se aproxime a una función desconocida $$f$$ (la realidad), tal que $$h(x) \approx f(x)$$, utilizando un conjunto de entrenamiento $$D$$.
 * **Funcionamiento:** El modelo hace predicciones, mide el error respecto a la etiqueta real (usando una **función de pérdida**) y ajusta sus parámetros para minimizar dicha discrepancia.
+
+Los datos de entrenamiento pueden reflejar **sesgos sociales** (por ejemplo, en un modelo de aprobación de préstamos si las etiquetas históricas discriminan grupos). Eso no se corrige solo con más datos: hace falta criterio ético, auditoría de variables y, a veces, replantear la medida de desempeño.
 
 ### 3.2 Error y Generalización
 Para saber si el modelo aprende, distinguimos dos tipos de error:
@@ -187,6 +209,11 @@ $$J_{reg}(w) = J_{original}(w) + \lambda \cdot R(w)$$
 > * $$\lambda$$ muy grande $$\to$$ Underfitting (modelo demasiado simple).
 > * $$\lambda = 0$$ $$\to$$ Regresión estándar (riesgo de Overfitting).
 
+### 5.3 Clasificador lineal, pérdida *hinge* y regresión logística
+Un clasificador binario puede usar $$h(x) = \text{sign}(w^\top x + b)$$. La pérdida **hinge** (estilo SVM) penaliza ejemplos mal clasificados o demasiado cerca del margen: $$\mathcal{L}(y,\hat{y}) = \max(0, 1 - y \cdot \hat{y})$$. Este enfoque **solo funciona bien si los datos son aproximadamente linealmente separables**; si no lo son, hay que cambiar de representación (por ejemplo **ingeniería de características**, expansión polinomial) o usar modelos no lineales / regresión logística con umbral probabilístico.
+
+La **regresión logística** asigna $$a = \sigma(w^\top x + b)$$ y entrena con entropía cruzada; el gradiente aprovecha $$\sigma'(z) = \sigma(z)(1-\sigma(z))$$ para actualizar $$w$$ y $$b$$ de forma estable.
+
 ***
 *Fuente complementaria: [Diferencias entre Regresión Lineal y Logística (AWS)](https://aws.amazon.com/es/compare/the-difference-between-linear-regression-and-logistic-regression/)*
 
@@ -207,6 +234,44 @@ El algoritmo (como ID3) busca el atributo que maximice la **Ganancia de Informac
 > **Problema:** Los árboles tienden a sobreajustarse mucho (aprenden el ruido).
 > **Solución:** Podar el árbol (pruning) o usar bosques aleatorios (Random Forests).
 
+En la práctica, variantes como **CART** pueden entrenar más lento que un solo árbol pequeño, pero la predicción en un árbol equilibrado suele ser del orden $$O(\log n)$$ respecto al tamaño del conjunto.
+
+---
+
+## 7. Búsqueda y planeación en espacios de estados
+
+Un **problema de búsqueda** (espacio finito) se define con: conjunto de **estados** $$S$$, **acciones** legales $$A(s)$$, **modelo de transición** $$\text{Succ}(s,a)$$, **costo local** $$c(s,a)$$, **estado inicial** y **estados meta** (o condición $$\text{Terminal}(s)$$). Un **plan** es una secuencia $$(s_0,a_0,s_1,\ldots)$$ tal que $$s_{i+1} = \text{Succ}(s_i, a_i)$$ y el **costo total** es la suma de costos locales; se busca un plan de **costo mínimo**.
+
+La **búsqueda genérica** mantiene una **frontera** de nodos (cada nodo guarda estado, padre, acción y costo acumulado), expande sucesores y detiene al alcanzar un estado terminal. Si el grafo de estados tiene **ciclos** o estados repetidos, conviene tratarlo como **búsqueda en grafo** y usar un conjunto de estados ya visitados (en Python, un `set`) para no explotar el tiempo.
+
+* **Factor de ramificación** $$b$$ y profundidad afectan la **complejidad temporal y espacial** de los algoritmos (crecimiento típico en $$O(b^d)$$ en el peor caso para búsqueda en profundidad).
+* Ejemplos vistos en clase: **Torres de Hanoi**, **puzzle deslizable** (8-puzzle), representación del estado del cubo de Rubik.
+
+### 7.1 Búsqueda informada y $$A^*$$
+Una **heurística** $$h(n)$$ estima el costo desde el estado del nodo $$n$$ hasta la meta. Si $$h$$ nunca **sobrestima** el costo real, es **admisible**; entonces $$A^*$$ con $$f(n) = g(n) + h(n)$$ ($$g$$ = costo desde el inicio) encuentra solución **óptima** cuando existe. Con información extra útil en el problema, $$A^*$$ (o variantes) suele ser la mejor opción frente a búsqueda ciega.
+
+---
+
+## 8. Juegos de suma cero y adversarios
+
+En **juegos de dos jugadores y suma cero**, un jugador maximiza una utilidad y el otro la minimiza; el entorno es **dinámico** y **determinista** (en la versión básica), con turnos alternados.
+
+* **Minimax** explora el árbol de juego hasta estados terminales (o hasta profundidad máxima) y propaga valores hacia arriba. Complejidad en el peor caso del orden $$O(b^{d_{\max}})$$.
+* **Poda $$\alpha$$–$$\beta$$** elimina ramas que no pueden mejorar el resultado ya garantizado por otra jugada; con **ordenamiento de jugadas** favorable se hacen más cortes.
+* **Negamax** reescribe min/max usando $$\min(x,y) = -\max(-x,-y)$$, unificando el código para ambos lados.
+
+Técnicas adicionales en juegos complejos (ajedrez): **tablas de transposición** (cacheo de estados ya evaluados), **búsqueda quiescente** (seguir explorando mientras el material o la posición cambian mucho), **libros de apertura** y **bases de datos de finales**. Las **heurísticas** suelen combinar material, control del centro, seguridad del rey, etc.
+
+---
+
+## 9. Cadenas de Markov y procesos de decisión markovianos (MDP)
+
+Una **cadena de Markov** (por ejemplo de primer orden) satisface que el futuro depende del presente, no de toda la historia: $$P(X_{t+1} \mid X_0,\ldots,X_t) = P(X_{t+1} \mid X_t)$$. Sirve como base para **series de tiempo**, filtrado y pronóstico (*forecasting*).
+
+Un **MDP** extiende el modelo con **acciones** y **recompensas** $$R(s,a,s')$$; suele usarse un **factor de descuento** $$\gamma \in (0,1]$$ para valorar utilidades futuras. La **función valor** $$V^\pi(s)$$ mide el retorno esperado siguiendo la política $$\pi$$; existe una **política óptima** $$\pi^*$$ que maximiza el valor en cada estado (bajo condiciones habituales).
+
+Las **ecuaciones de optimalidad de Bellman** relacionan $$V^*$$ y la función **$$Q^*(s,a)$$** (valor de tomar $$a$$ en $$s$$ y actuar óptimo después). Algoritmos como **iteración de valor** o **iteración de política** (programación dinámica) aproximan $$\pi^*$$ y $$Q$$ cuando el modelo es conocido; la idea codificada en clase actualiza $$Q(s,a)$$ con expectativas sobre transiciones y máximo sobre acciones en el siguiente estado.
+
 ---
 
 ## Conceptos Clave (Glosario)
@@ -219,3 +284,6 @@ El algoritmo (como ID3) busca el atributo que maximice la **Ganancia de Informac
 *   **Descenso del Gradiente:** Algoritmo de optimización que ajusta iterativamente los parámetros moviéndose en la dirección opuesta a la pendiente del error.
 *   **Entropía:** En teoría de la información, mide el nivel de desorden o incertidumbre en un conjunto de datos. Usado para construir árboles de decisión.
 *   **Matriz de Diseño ($$X$$):** Matriz que contiene todos los datos de entrenamiento, donde cada fila es un ejemplo y cada columna una característica (feature).
+*   **Heurística admisible:** Estimación del costo a la meta que no sobrestima el costo real; condición clave para optimalidad de $$A^*$$ con costos no negativos.
+*   **MDP:** Modelo con estados, acciones, transiciones (posiblemente estocásticas) y recompensas; la política óptima maximiza el retorno esperado descontado.
+*   **Poda $$\alpha$$–$$\beta$$:** Técnica que reduce nodos explorados en minimax sin cambiar el resultado en juegos de suma cero con utilidad exacta en hojas.
