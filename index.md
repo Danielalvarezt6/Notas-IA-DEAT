@@ -330,7 +330,7 @@ Los valores **$$Q^\pi(s,a)$$** son la utilidad esperada tras tomar $$a$$ en $$s$
 $$Q^\pi(s,a) = \sum_{s'} T(s,a,s')\bigl[R(s,a,s') + \gamma V^\pi(s')\bigr], \qquad
 V^\pi(s) = Q^\pi(s,\pi(s)) \ \ (\text{si no es estado final}).$$
 
-**Evaluación de políticas:** se inicializan valores y se iteran las ecuaciones hasta que el cambio máximo sea menor que un umbral $$\varepsilon$$. Coste típico por iteración del orden de $$O(|S| \cdot |A| \cdot S')$$ con $$S'$$ sucesores no nulos por par $$(s,a)$$.
+**Evaluación de políticas:** se inicializan valores y se iteran las ecuaciones hasta que el cambio máximo sea menor que un umbral $$\varepsilon$$. Coste típico por iteración del orden de $$O(\vert S \vert \cdot \vert A \vert \cdot S')$$ con $$S'$$ sucesores no nulos por par $$(s,a)$$.
 
 ### 9.3 Valor óptimo e iteración de valor (Bellman)
 El **valor óptimo** cumple:
