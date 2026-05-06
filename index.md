@@ -351,10 +351,10 @@ hasta convergencia. **Convergencia** habitual si $$\gamma < 1$$ o si el grafo de
 
 ### 9.4 Aprendizaje por Refuerzo (Reinforcement Learning)
 A diferencia de la Programación Dinámica, donde se dispone de un modelo perfecto del MDP, en el Aprendizaje por Refuerzo se opta por interactuar con el entorno (frecuentemente a través de un simulador) porque el cálculo analítico se vuelve impracticable ante grandes cantidades de estados o cuando las probabilidades de transición son desconocidas.
-*   **Diferencia Temporal (TD-0):** Sirve para calcular la función de valor actualizando las predicciones a partir de las recompensas obtenidas tras aplicar una acción: $\hat{V}^\pi(s) \leftarrow \hat{V}^\pi(s) + \alpha [r + \gamma \hat{V}^\pi(s') - \hat{V}^\pi(s)]$.
-*   **SARSA (On-policy):** Este método de aprendizaje actualiza los valores basándose en las acciones que realmente sigue la política dictaminada, calculando el error con $q = r + \gamma Q(s',a')$ para posteriormente actualizar mediante $Q(s,a) \leftarrow Q(s,a) + \alpha (q - Q(s,a))$.
-*   **Q-Learning (Off-policy):** Este enfoque actualiza directamente hacia la acción de mayor valor, independientemente de la política que se esté siguiendo en ese instante para explorar, definiendo la meta como $q = r + \gamma \max_{a'} Q(s',a')$.
-*   **Política Épsilon-Greedy:** Se implementa frecuentemente como balance de exploración permitiendo que el sistema elija una acción aleatoria con una probabilidad determinada por $\epsilon$, y opte por la mejor acción conocida evaluando $$\arg\max_a Q(s,a)$$ el resto de las veces.
+*   **Diferencia Temporal (TD-0):** Sirve para calcular la función de valor actualizando las predicciones a partir de las recompensas obtenidas tras aplicar una acción: $$\hat{V}^\pi(s) \leftarrow \hat{V}^\pi(s) + \alpha [r + \gamma \hat{V}^\pi(s') - \hat{V}^\pi(s)]$$.
+*   **SARSA (On-policy):** Este método de aprendizaje actualiza los valores basándose en las acciones que realmente sigue la política dictaminada, calculando el error con $$q = r + \gamma Q(s',a')$$ para posteriormente actualizar mediante $$Q(s,a) \leftarrow Q(s,a) + \alpha (q - Q(s,a))$$.
+*   **Q-Learning (Off-policy):** Este enfoque actualiza directamente hacia la acción de mayor valor, independientemente de la política que se esté siguiendo en ese instante para explorar, definiendo la meta como $$q = r + \gamma \max_{a'} Q(s',a')$$.
+*   **Política Épsilon-Greedy:** Se implementa frecuentemente como balance de exploración permitiendo que el sistema elija una acción aleatoria con una probabilidad determinada por $$\epsilon$$, y opte por la mejor acción conocida evaluando $$\arg\max_a Q(s,a)$$ el resto de las veces.
 
 ---
 
