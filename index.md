@@ -4,7 +4,7 @@ title: Notas de Inteligencia Artificial - Daniel Alvarez
 math: true
 ---
 
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script id="MathJax-script" async src="[https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js](https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js)"></script>
 
 # Notas Inteligencia Artificial
 
@@ -63,18 +63,12 @@ El **estado** suele codificarse como un vector $$s = (s_1, \ldots, s_n)$$ cuyas 
 
 El **cardinal** del espacio de estados crece muy rápido; en problemas combinatorios puede ser astronómicamente grande, lo que motiva algoritmos de búsqueda e inteligentes en lugar de enumeración exhaustiva.
 
-### 2.5 Mapa temático del curso (visión global)
-Según las notas, los temas se articulan de lo más abstracto y estructurado hacia aplicaciones con incertidumbre y conocimiento:
+### Dibujito
 
-* **Aprendizaje automático** y **búsqueda** en espacios de estados finitos.
-* **Juegos** (deterministas) y **MDP / juegos estocásticos** cuando hay azar.
-* **Problemas de satisfacción de restricciones (CSP)** y **optimización**.
-* **Sistemas basados en conocimiento** (representación e inferencia).
+<p align="center">
+  <img src="dibujo.png" alt="dibujito" width="100%">
+</p>
 
----
-
-### 2.6 Sistemas basados en conocimiento
-Además del enfoque numérico $$f(x)$$ típico del aprendizaje supervisado, se trabaja el paradigma **declarativo**: una **base de conocimiento** (reglas y relaciones) y una **base de hechos** sobre el mundo actual, consultadas por un **motor de inferencia** que deduce respuestas. El entorno puede modelarse de forma **orientada a objetos** (propiedades como datos, métodos que dependen del estado) para organizar el código del agente.
 
 ---
 
@@ -92,8 +86,6 @@ Los datos de entrenamiento pueden reflejar **sesgos sociales** (por ejemplo, en 
 Para saber si el modelo aprende, distinguimos dos tipos de error:
 1.  **Error en muestra ($$E_{in}$$):** El error calculado sobre los datos de entrenamiento.
 2.  **Error fuera de muestra ($$E_{out}$$):** El error sobre datos nuevos (**generalización**).
-
-
 
 ### 3.3 Overfitting vs. Underfitting
 El éxito del aprendizaje supervisado depende de encontrar el equilibrio entre la complejidad del modelo y la cantidad de datos.
@@ -166,9 +158,15 @@ En la práctica el modelo no actúa sobre $$x$$ crudo sino sobre un vector de ca
 * **Características no lineales en $$x$$, lineales en $$w$$:** Con $$\phi(x) = [1, x, x^2]$$ la predicción $$w \cdot \phi(x)$$ es un polinomio en $$x$$, pero sigue siendo lineal en $$w$$ (misma maquinaria de optimización). Otros ejemplos: **funciones constantes por tramos** (indicadores de intervalos), términos **periódicos** como $$\cos(\omega x)$$, o en clasificación $$\phi(x) = [x_1, x_2, x_1^2 + x_2^2]$$ para que el límite de decisión sea un **círculo** en el plano original pero un **hiperplano** en el espacio de características.
 
 ---
+
 # 5. Clasificación y Regularización
 
-### 5.1 Clasificación Lineal vs. Regresión Logística
+### 5.1 El Perceptrón Clásico (PLA)
+Antes de introducir modelos probabilísticos para la clasificación, un enfoque fundamental es el Algoritmo de Aprendizaje del Perceptrón (PLA).
+*   **Hipótesis:** Utiliza la función signo para predecir etiquetas discretas en el conjunto $\{-1, 1\}$, tal que: $h_\theta(x) = \text{sign}(w^T x + b)$.
+*   **Función de Pérdida:** Emplea una pérdida calculada como $loss(y, \hat{y}) = \max(-y\hat{y}, 0)$.
+
+### 5.2 Clasificación Lineal vs. Regresión Logística
 A diferencia de la regresión lineal, la clasificación predice etiquetas discretas o probabilidades de pertenencia a una clase.
 
 **Tabla Comparativa:**
@@ -192,7 +190,7 @@ El MSE no es adecuado aquí porque generaría una función "no convexa" (muchos 
 
 $$J(w) = - \frac{1}{M} \sum_{i=1}^{M} [a^{(i)} \log(\hat{a}^{(i)}) + (1 - a^{(i)}) \log(1 - \hat{a}^{(i)})]$$
 
-### 5.2 Regularización (Controlando el Overfitting)
+### 5.3 Regularización (Controlando el Overfitting)
 Para evitar que el modelo "memorice" el ruido de los datos de entrenamiento (**Overfitting**), penalizamos los pesos grandes. Esto aplica el principio de la **Navaja de Ockham**: ante dos modelos con error similar, preferimos el más simple.
 
 Nueva función de costo a minimizar:
@@ -215,7 +213,7 @@ $$J_{reg}(w) = J_{original}(w) + \lambda \cdot R(w)$$
 > * $$\lambda$$ muy grande $$\to$$ Underfitting (modelo demasiado simple).
 > * $$\lambda = 0$$ $$\to$$ Regresión estándar (riesgo de Overfitting).
 
-### 5.3 Clasificador lineal, pérdida *hinge* y regresión logística
+### 5.4 Clasificador lineal, pérdida *hinge* y regresión logística
 Un clasificador binario puede usar $$h(x) = \text{sign}(w^\top x + b)$$. La pérdida **hinge** (estilo SVM) penaliza ejemplos mal clasificados o demasiado cerca del margen: $$\mathcal{L}(y,\hat{y}) = \max(0, 1 - y \cdot \hat{y})$$. Este enfoque **solo funciona bien si los datos son aproximadamente linealmente separables**; si no lo son, hay que cambiar de representación (por ejemplo **ingeniería de características**, expansión polinomial) o usar modelos no lineales / regresión logística con umbral probabilístico.
 
 La **regresión logística** asigna $$a = \sigma(w^\top x + b)$$ y entrena con entropía cruzada; el gradiente aprovecha $$\sigma'(z) = \sigma(z)(1-\sigma(z))$$ para actualizar $$w$$ y $$b$$ de forma estable.
@@ -229,7 +227,6 @@ Los árboles de decisión parten el espacio de datos mediante reglas secuenciale
 
 ![Ejemplo arbol de decision](https://lh6.googleusercontent.com/zBZfWd32HV7q2N7KYpaxmfhXvfF4KPjAkAr4BHPO6UqRtdrRaxi7GlGIdIpCaD847Z06R6twakOS2X-JWXxeuKUHkJHziyRY93xrIbi8iW22N3pxBxUB5-f1j2jj56oDr2HAuDI)
 
-
 ### 6.1 Selección de Atributos (Entropía)
 Para decidir qué pregunta hacer en cada nodo del árbol (ej. "¿Es mayor a 5?"), usamos medidas de pureza como la **Entropía**:
 
@@ -241,6 +238,10 @@ El algoritmo (como ID3) busca el atributo que maximice la **Ganancia de Informac
 > **Solución:** Podar el árbol (pruning) o usar bosques aleatorios (Random Forests).
 
 En la práctica, variantes como **CART** pueden entrenar más lento que un solo árbol pequeño, pero la predicción en un árbol equilibrado suele ser del orden $$O(\log n)$$ respecto al tamaño del conjunto.
+
+### 6.2 Métodos de Ensamble y Bagging
+Para fortalecer clasificaciones sencillas y evitar el sobreajuste natural de un solo árbol de decisión, se recurre a la creación de múltiples modelos juntos.
+*   **Bagging:** Este método de aprendizaje por conjuntos se emplea comúnmente con el fin de reducir la varianza dentro de un conjunto de datos que presenta ruido. Se logra combinando las decisiones de múltiples clasificadores base.
 
 ---
 
@@ -254,9 +255,10 @@ A cada problema le corresponde un **grafo de espacio de estados** (arcos = trans
 Según observabilidad e incertidumbre: determinista y totalmente observable (un solo estado de creencia), **sin sensores** (*sensorless* / *conformant*), **parcialmente observable o no determinista** (planes contingentes, a veces intercalar búsqueda y ejecución), o **espacio desconocido** (exploración primero). Las aplicaciones van de rutas y planificación de movimiento hasta traducción automática modelada como secuencias de acciones.
 
 ### 7.2 Búsqueda en profundidad, amplitud y en grafo
-* **DFS:** frontera tipo **pila** (LIFO); explora primero lo más profundo.
-* **BFS:** frontera tipo **cola** (FIFO); encuentra el camino con **menos pasos** si todas las acciones cuestan lo mismo, pero **no** minimiza costo general con acciones de costo distinto.
+* **DFS:** frontera tipo **pila** (LIFO); explora primero lo más profundo. Su complejidad temporal es de $O(b^m)$ y su complejidad espacial es de $O(b \cdot m)$, donde $m$ es la profundidad máxima.
+* **BFS:** frontera tipo **cola** (FIFO); encuentra el camino con **menos pasos** si todas las acciones cuestan lo mismo, pero **no** minimiza costo general con acciones de costo distinto. Presenta una complejidad temporal y espacial de $O(b^d)$, donde $d$ es la profundidad de la solución.
 * **Grafo vs árbol:** sin detectar **estados repetidos**, el trabajo puede crecer exponencialmente (“quien no recuerda el pasado…”). La **búsqueda en grafo** mantiene un conjunto de estados ya **explorados** (`set` / diccionario) y evita reexpandir el mismo estado.
+* **IDS (Búsqueda por Identidad/Profundidad Iterativa):** Es un algoritmo de búsqueda no informada que logra combinar la eficiencia de memoria característica de la búsqueda en profundidad (DFS) con la completitud y optimalidad propias de la búsqueda en amplitud (BFS).
 
 ### 7.3 Búsqueda de costo uniforme (UCS)
 **Uniform Cost Search** expande siempre el nodo de **menor costo acumulado** $$g(n)$$; la frontera es una **cola de prioridad**. Con costos no negativos es **completa** y **óptima**, pero explora en **contornos de costo** crecientes “en todas direcciones” si no hay información del objetivo.
@@ -347,6 +349,36 @@ $$V^{(t)}(s) \leftarrow \max_{a} \sum_{s'} T(s,a,s')\bigl[R(s,a,s') + \gamma V^{
 hasta convergencia. **Convergencia** habitual si $$\gamma < 1$$ o si el grafo del MDP es **acíclico**; con $$\gamma = 1$$ y recompensas nulas puede no converger en ciclos.
 
 **Idea unificadora (programación dinámica):** la búsqueda con DP calcula costos futuros mínimos en grafos; la **evaluación de políticas** calcula $$V^\pi$$; la **iteración de valor** calcula $$V_{\text{opt}}$$. El patrón es escribir la recurrencia y convertirla en asignaciones iterativas hasta converger.
+
+### 9.4 Aprendizaje por Refuerzo (Reinforcement Learning)
+A diferencia de la Programación Dinámica, donde se dispone de un modelo perfecto del MDP, en el Aprendizaje por Refuerzo se opta por interactuar con el entorno (frecuentemente a través de un simulador) porque el cálculo analítico se vuelve impracticable ante grandes cantidades de estados o cuando las probabilidades de transición son desconocidas.
+*   **Diferencia Temporal (TD-0):** Sirve para calcular la función de valor actualizando las predicciones a partir de las recompensas obtenidas tras aplicar una acción: $\hat{V}^\pi(s) \leftarrow \hat{V}^\pi(s) + \alpha [r + \gamma \hat{V}^\pi(s') - \hat{V}^\pi(s)]$.
+*   **SARSA (On-policy):** Este método de aprendizaje actualiza los valores basándose en las acciones que realmente sigue la política dictaminada, calculando el error con $q = r + \gamma Q(s',a')$ para posteriormente actualizar mediante $Q(s,a) \leftarrow Q(s,a) + \alpha (q - Q(s,a))$.
+*   **Q-Learning (Off-policy):** Este enfoque actualiza directamente hacia la acción de mayor valor, independientemente de la política que se esté siguiendo en ese instante para explorar, definiendo la meta como $q = r + \gamma \max_{a'} Q(s',a')$.
+*   **Política Épsilon-Greedy:** Se implementa frecuentemente como balance de exploración permitiendo que el sistema elija una acción aleatoria con una probabilidad determinada por $\epsilon$, y opte por la mejor acción conocida evaluando $\arg\max_a Q(s,a)$ el resto de las veces.
+
+---
+
+## 10. Optimización y Búsquedas Locales
+En diversos contextos, la secuencia u orden para llegar a un estado resulta irrelevante; lo que verdaderamente se requiere es encontrar un estado final $x^*$ que resuelva eficientemente la optimización, tal que logre maximizar o minimizar una función $f(x)$.
+
+### 10.1 Máximos y Mínimos Locales frente a Globales
+En el proceso de optimizar no siempre se persigue localizar el mejor resultado absoluto.
+*   Un **óptimo global** representa el mejor valor considerando absolutamente todo el espacio de estados $X$.
+*   Un **óptimo local** es el valor predominante únicamente al ser comparado contra un conjunto específico de vecinos topológicos.
+
+### 10.2 Descenso de Colinas (Hill Climbing)
+A partir de un estado generado aleatoriamente, el sistema evalúa su entorno directo iterativamente y se transita hacia aquel estado vecino que represente un costo menor para la función evaluada. Sin embargo, si ningún vecino provee un beneficio evidente respecto al estado actual, el algoritmo se detiene, siendo propenso a estancarse en mínimos locales.
+
+### 10.3 Temple Simulado (Simulated Annealing)
+Para evadir la convergencia prematura en óptimos locales, este algoritmo probabilístico permite realizar transiciones hacia estados aparentemente peores. Si el incremento del costo es negativo se asume el estado inmediatamente, de lo contrario se somete la decisión a la evaluación de $e^{\Delta c / T}$. La variable representativa de la temperatura, designada como $T$, se reduce dinámicamente con una función calendarizadora como $T_{max} / (\ln(i+1)+1)$.
+
+### 10.4 Algoritmos Genéticos
+Inspirados en la teoría moderna de la evolución biológica, estructuran las búsquedas manteniendo y modificando conjuntos denominados poblaciones.
+*   **Adaptación (Fitness):** Permite cuantificar las aptitudes de los individuos bajo el principio de que su puntaje es inversamente proporcional al costo que generan.
+*   **Selección:** Basándose en los niveles de adaptación, se determina cuáles candidatos persistirán; métodos populares incluyen estrategias de ruleta y competiciones de torneo.
+*   **Cruza y Mutación:** Los elementos seleccionados actúan como "padre" y "madre" para procrear un "hijo" combinando características directas, introduciendo además mutaciones aleatorias para garantizar mayor cobertura exploratoria.
+*   **Elitismo:** Una práctica fundamental consistente en preservar y almacenar el estado o individuo de menor costo existente para certificar que el óptimo superior documentado no desaparezca en siguientes generaciones.
 
 ---
 
