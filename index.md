@@ -8,8 +8,7 @@ math: true
 
 # Notas Inteligencia Artificial
 
-> **Nota sobre el contenido:** Este material fue sintetizado con el apoyo de **NotebookLM**, tomando como base mis apuntes personales y las presentaciones utilizadas en las sesiones de clase.(notas desde enero–marzo de 2026).
-
+> **Nota sobre el contenido:** Este material fue sintetizado con el apoyo de **NotebookLM**, tomando como base mis apuntes personales y las presentaciones utilizadas en las sesiones de clase.
 ## 1. Introducción a la Inteligencia Artificial
 
 ### 1.1 Categorías de la IA
