@@ -162,8 +162,8 @@ En la práctica el modelo no actúa sobre $$x$$ crudo sino sobre un vector de ca
 
 ### 5.1 El Perceptrón Clásico (PLA)
 Antes de introducir modelos probabilísticos para la clasificación, un enfoque fundamental es el Algoritmo de Aprendizaje del Perceptrón (PLA).
-*   **Hipótesis:** Utiliza la función signo para predecir etiquetas discretas en el conjunto $\{-1, 1\}$, tal que: $h_\theta(x) = \text{sign}(w^T x + b)$.
-*   **Función de Pérdida:** Emplea una pérdida calculada como $loss(y, \hat{y}) = \max(-y\hat{y}, 0)$.
+*   **Hipótesis:** Utiliza la función signo para predecir etiquetas discretas en el conjunto $$\{-1, 1\}$$, tal que: $$h_\theta(x) = \text{sign}(w^T x + b)$$.
+*   **Función de Pérdida:** Emplea una pérdida calculada como $$loss(y, \hat{y}) = \max(-y\hat{y}, 0)$$.
 
 ### 5.2 Clasificación Lineal vs. Regresión Logística
 A diferencia de la regresión lineal, la clasificación predice etiquetas discretas o probabilidades de pertenencia a una clase.
@@ -254,9 +254,9 @@ A cada problema le corresponde un **grafo de espacio de estados** (arcos = trans
 Según observabilidad e incertidumbre: determinista y totalmente observable (un solo estado de creencia), **sin sensores** (*sensorless* / *conformant*), **parcialmente observable o no determinista** (planes contingentes, a veces intercalar búsqueda y ejecución), o **espacio desconocido** (exploración primero). Las aplicaciones van de rutas y planificación de movimiento hasta traducción automática modelada como secuencias de acciones.
 
 ### 7.2 Búsqueda en profundidad, amplitud y en grafo
-* **DFS:** frontera tipo **pila** (LIFO); explora primero lo más profundo. Su complejidad temporal es de $O(b^m)$ y su complejidad espacial es de $O(b \cdot m)$, donde $m$ es la profundidad máxima.
-* **BFS:** frontera tipo **cola** (FIFO); encuentra el camino con **menos pasos** si todas las acciones cuestan lo mismo, pero **no** minimiza costo general con acciones de costo distinto. Presenta una complejidad temporal y espacial de $O(b^d)$, donde $d$ es la profundidad de la solución.
-* **Grafo vs árbol:** sin detectar **estados repetidos**, el trabajo puede crecer exponencialmente (“quien no recuerda el pasado…”). La **búsqueda en grafo** mantiene un conjunto de estados ya **explorados** (`set` / diccionario) y evita reexpandir el mismo estado.
+* **DFS:** frontera tipo **pila** (LIFO); explora primero lo más profundo. Su complejidad temporal es de $$O(b^m)$$ y su complejidad espacial es de $$O(b \cdot m)$$, donde $$m$$ es la profundidad máxima.
+* **BFS:** frontera tipo **cola** (FIFO); encuentra el camino con **menos pasos** si todas las acciones cuestan lo mismo, pero **no** minimiza costo general con acciones de costo distinto. Presenta una complejidad temporal y espacial de $$O(b^d)$$, donde $$d$$ es la profundidad de la solución.
+* **Grafo vs árbol:** sin detectar **estados repetidos**, el trabajo puede crecer exponencialmente (“quien no recuerda el pasado esta condenado a repetirlo”). La **búsqueda en grafo** mantiene un conjunto de estados ya **explorados** (`set` / diccionario) y evita reexpandir el mismo estado.
 * **IDS (Búsqueda por Identidad/Profundidad Iterativa):** Es un algoritmo de búsqueda no informada que logra combinar la eficiencia de memoria característica de la búsqueda en profundidad (DFS) con la completitud y optimalidad propias de la búsqueda en amplitud (BFS).
 
 ### 7.3 Búsqueda de costo uniforme (UCS)
@@ -354,23 +354,23 @@ A diferencia de la Programación Dinámica, donde se dispone de un modelo perfec
 *   **Diferencia Temporal (TD-0):** Sirve para calcular la función de valor actualizando las predicciones a partir de las recompensas obtenidas tras aplicar una acción: $\hat{V}^\pi(s) \leftarrow \hat{V}^\pi(s) + \alpha [r + \gamma \hat{V}^\pi(s') - \hat{V}^\pi(s)]$.
 *   **SARSA (On-policy):** Este método de aprendizaje actualiza los valores basándose en las acciones que realmente sigue la política dictaminada, calculando el error con $q = r + \gamma Q(s',a')$ para posteriormente actualizar mediante $Q(s,a) \leftarrow Q(s,a) + \alpha (q - Q(s,a))$.
 *   **Q-Learning (Off-policy):** Este enfoque actualiza directamente hacia la acción de mayor valor, independientemente de la política que se esté siguiendo en ese instante para explorar, definiendo la meta como $q = r + \gamma \max_{a'} Q(s',a')$.
-*   **Política Épsilon-Greedy:** Se implementa frecuentemente como balance de exploración permitiendo que el sistema elija una acción aleatoria con una probabilidad determinada por $\epsilon$, y opte por la mejor acción conocida evaluando $\arg\max_a Q(s,a)$ el resto de las veces.
+*   **Política Épsilon-Greedy:** Se implementa frecuentemente como balance de exploración permitiendo que el sistema elija una acción aleatoria con una probabilidad determinada por $\epsilon$, y opte por la mejor acción conocida evaluando $$\arg\max_a Q(s,a)$$ el resto de las veces.
 
 ---
 
 ## 10. Optimización y Búsquedas Locales
-En diversos contextos, la secuencia u orden para llegar a un estado resulta irrelevante; lo que verdaderamente se requiere es encontrar un estado final $x^*$ que resuelva eficientemente la optimización, tal que logre maximizar o minimizar una función $f(x)$.
+En diversos contextos, la secuencia u orden para llegar a un estado resulta irrelevante; lo que verdaderamente se requiere es encontrar un estado final $$x^*$$ que resuelva eficientemente la optimización, tal que logre maximizar o minimizar una función $$f(x)$$.
 
 ### 10.1 Máximos y Mínimos Locales frente a Globales
 En el proceso de optimizar no siempre se persigue localizar el mejor resultado absoluto.
-*   Un **óptimo global** representa el mejor valor considerando absolutamente todo el espacio de estados $X$.
+*   Un **óptimo global** representa el mejor valor considerando absolutamente todo el espacio de estados $$X$$.
 *   Un **óptimo local** es el valor predominante únicamente al ser comparado contra un conjunto específico de vecinos topológicos.
 
 ### 10.2 Descenso de Colinas (Hill Climbing)
 A partir de un estado generado aleatoriamente, el sistema evalúa su entorno directo iterativamente y se transita hacia aquel estado vecino que represente un costo menor para la función evaluada. Sin embargo, si ningún vecino provee un beneficio evidente respecto al estado actual, el algoritmo se detiene, siendo propenso a estancarse en mínimos locales.
 
 ### 10.3 Temple Simulado (Simulated Annealing)
-Para evadir la convergencia prematura en óptimos locales, este algoritmo probabilístico permite realizar transiciones hacia estados aparentemente peores. Si el incremento del costo es negativo se asume el estado inmediatamente, de lo contrario se somete la decisión a la evaluación de $e^{\Delta c / T}$. La variable representativa de la temperatura, designada como $T$, se reduce dinámicamente con una función calendarizadora como $T_{max} / (\ln(i+1)+1)$.
+Para evadir la convergencia prematura en óptimos locales, este algoritmo probabilístico permite realizar transiciones hacia estados aparentemente peores. Si el incremento del costo es negativo se asume el estado inmediatamente, de lo contrario se somete la decisión a la evaluación de $$e^{\Delta c / T}$$. La variable representativa de la temperatura, designada como $$T$$, se reduce dinámicamente con una función calendarizadora como $$T_{max} / (\ln(i+1)+1)$$.
 
 ### 10.4 Algoritmos Genéticos
 Inspirados en la teoría moderna de la evolución biológica, estructuran las búsquedas manteniendo y modificando conjuntos denominados poblaciones.
