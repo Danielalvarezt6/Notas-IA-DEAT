@@ -4,7 +4,7 @@ title: Notas de Inteligencia Artificial - Daniel Alvarez
 math: true
 ---
 
-<script id="MathJax-script" async src="[https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js](https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js)"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 # Notas Inteligencia Artificial
 
