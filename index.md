@@ -381,6 +381,60 @@ Inspirados en la teoría moderna de la evolución biológica, estructuran las b�
 
 ---
 
+#### 11. Problemas de Satisfacción de Restricciones (CSPs)
+Esta área representa un cambio de paradigma en la IA: pasamos de los modelos basados en estados a los **modelos basados en variables**. En lugar de preocuparnos por una secuencia de acciones para llegar a una meta, nos enfocamos en encontrar una configuración de variables que cumpla con ciertas reglas.
+
+##### 11.1 Definición Formal y Grafos de Factores
+
+![Ejemplo de Grafo de Factores](https://stanford.edu/~shervine/teaching/cs-221/illustrations/factor-graph.png)
+
+Los CSPs se modelan utilizando una estructura llamada **Grafo de Factores**, compuesta por:
+*   **Variables (** $$X_1, X_2, \ldots, X_n$$ **):** Representan las incógnitas del problema. Cada variable toma valores de un conjunto posible llamado **dominio**.
+*   **Factores (** $$f_1, f_2, \ldots, f_m$$ **):** Son funciones matemáticas que evalúan un subconjunto de variables (su alcance o "scope") y devuelven un **número no negativo** que representa una preferencia. 
+    *   *Nota:* Si un factor devuelve estrictamente `0` o `1` (donde 0 es una asignación prohibida y 1 permitida), se le conoce como una **Restricción (Constraint)**.
+
+**Peso de una asignación:**
+Para evaluar qué tan buena es una asignación completa (donde todas las variables tienen un valor), se calcula su peso. El peso es el **producto matemático** de todos los factores evaluados en esa asignación:
+$$\text{Weight}(x) = \prod_{j=1}^{m} f_j(x)$$
+*   **Objetivo:** El algoritmo debe encontrar la asignación de **peso máximo**.
+*   Si un solo factor devuelve un `0`, toda la multiplicación se vuelve `0`, lo que significa que la asignación es **inconsistente** (se violó una restricción).
+
+El lema fundamental de este paradigma es: **"Especificar localmente, optimizar globalmente"**. Tú modelas las reglas locales en factores pequeños y el algoritmo deduce la mejor solución global.
+
+##### 11.2 Búsqueda Exacta: Backtracking y Heurísticas
+La solución por defecto para encontrar el peso máximo es la **Búsqueda con Retroceso (Backtracking Search)**, la cual explora el árbol de asignaciones. Sin embargo, como su tiempo es exponencial en el peor de los casos, requiere técnicas para podar caminos inútiles rápidamente:
+
+*   **Evaluación de Pesos Parciales:** No se espera hasta el final para evaluar los factores. Si al asignar algunas variables un factor da `0`, se detiene la búsqueda en esa rama y se hace retroceso (backtrack).
+*   **Forward Checking (Mirada hacia adelante):** Tras asignar un valor a una variable, el algoritmo revisa a sus "vecinos" directos y elimina de sus dominios cualquier valor que se vuelva inconsistente. Si el dominio de algún vecino queda vacío, se interrumpe la búsqueda inmediatamente.
+
+Para decidir el orden en el que se procesa el árbol, se usan dos heurísticas dinámicas clave:
+1.  **Variable Más Restringida (MCV - Most Constrained Variable):** Al elegir qué variable asignar a continuación, escoge la que tenga **el dominio más pequeño**. *Inteligencia detrás:* Si nos vamos a equivocar, es mejor fallar rápido para podar el árbol pronto.
+2.  **Valor Menos Restringido (LCV - Least Constraining Value):** Una vez seleccionada la variable, se ordenan sus valores probando primero aquel que elimine **la menor cantidad de opciones** en los dominios de las variables vecinas. *Inteligencia detrás:* Queremos dejarle la mayor libertad posible a los vecinos para no quedarnos atascados.
+
+##### 11.3 Consistencia de Arco (AC-3)
+Es una mejora agresiva sobre el *Forward Checking*.
+*   **Definición:** Una variable $$X_i$$ es "arco-consistente" respecto a $$X_j$$ si para cada valor disponible en el dominio de $$X_i$$, existe al menos un valor compatible en el dominio de $$X_j$$.
+*   **Algoritmo AC-3:** Mientras que el *Forward Checking* solo revisa un paso adelante, AC-3 aplica un efecto dominó continuo. Revisa a los vecinos, luego a los vecinos de los vecinos, propagando las restricciones hasta que ya no es posible eliminar más valores de los dominios.
+*   *Limitación:* AC-3 limpia enormemente el espacio de búsqueda en tiempo polinomial, pero **solo detecta inconsistencias locales**; los conflictos globales profundos aún requieren usar la Búsqueda Backtracking.
+
+##### 11.4 Búsquedas Aproximadas (Para eficiencia)
+Cuando el problema es masivo y no hay tiempo para una búsqueda exacta (Backtracking), se intercambia la precisión matemática por velocidad:
+
+1.  **Búsqueda en Haz (Beam Search):** 
+    En lugar de explorar todo el árbol, mantiene un tamaño máximo de $$K$$ candidatos en cada nivel.
+    *   Expande las variables nivel por nivel.
+    *   Calcula el peso de las ramas y poda conservando únicamente a los mejores $$K$$ candidatos parciales.
+    *   *Ventaja:* Su tiempo de ejecución es lineal $$O(nKb \log K)$$ respecto a la cantidad de variables, pero no garantiza encontrar el óptimo global.
+
+2.  **Búsqueda Local (Iterated Conditional Modes - ICM):**
+    Cambia drásticamente la estrategia: no construye desde cero. 
+    *   Comienza asignando valores **completamente al azar** a todas las variables.
+    *   Entra en un ciclo donde reevalúa una variable a la vez, probando cambiar su valor para ver si el peso global aumenta.
+    *   *Ventaja de localidad:* Para saber si el cambio es bueno, **solo multiplica los factores directamente conectados** a esa variable, ahorrando masivamente costo computacional.
+    *   *Desventaja:* Converge rápidamente, pero es muy propenso a quedarse atascado en óptimos locales.
+  
+---
+
 ## Conceptos Clave (Glosario)
 
 *   **Agente Racional:** Sistema que percibe y actúa maximizando su medida de desempeño esperada.
@@ -397,3 +451,12 @@ Inspirados en la teoría moderna de la evolución biológica, estructuran las b�
 *   **UCS (Uniform Cost Search):** Búsqueda que expande por menor costo acumulado $$g$$; óptima con costos no negativos.
 *   **Transición $$T(s,a,s')$$:** En MDPs, probabilidad de llegar a $$s'$$ tras $$a$$ en $$s$$; generaliza al sucesor único de la búsqueda clásica.
 *   **Iteración de valor:** Algoritmo de Bellman que actualiza $$V(s)$$ con el máximo sobre acciones de la expectativa de recompensa más $$V$$ descontado en sucesores.
+*   **Problema de Satisfacción de Restricciones (CSP):** Un modelo basado en variables cuyo objetivo es encontrar la asignación de peso máximo para un conjunto de variables, basándose en la idea de "especificar localmente, optimizar globalmente".
+*   **Grafo de Factores:** Estructura matemática para modelar un CSP; está compuesta por variables (que toman valores de un conjunto llamado dominio) y factores.
+*   **Factor y Restricción (Constraint):** Un factor es una función que evalúa un subconjunto de variables y devuelve una preferencia (un número no negativo). Si el factor devuelve estrictamente 0 (prohibido) o 1 (permitido), se le llama restricción.
+*   **Peso de una Asignación:** Es el producto de todos los factores evaluados para una asignación particular. Si el peso es 0, la asignación es inconsistente; el objetivo del CSP es encontrar la asignación con el peso máximo.
+*   **Consistencia de Arco (Arc Consistency):** Propiedad que se cumple si, para cada valor en el dominio de una variable, existe al menos un valor compatible en el dominio de una variable vecina que no viole las reglas.
+*   **MCV (Most Constrained Variable):** Heurística que elige la siguiente variable a asignar basándose en cuál tiene el dominio más pequeño (menos opciones).
+*   **LCV (Least Constraining Value):** Heurística que ordena los valores de una variable eligiendo primero el que deje la mayor cantidad de opciones válidas para sus variables vecinas.
+*   **Búsqueda en Haz (Beam Search):** Algoritmo de búsqueda aproximada para CSPs que explora el árbol por niveles, pero poda las opciones reteniendo únicamente los $$K$$ candidatos parciales con mejor peso en cada nivel.
+*   **Modos Condicionales Iterados (ICM):** Algoritmo de Búsqueda Local que inicia con una asignación completa aleatoria y la va mejorando iterativamente, cambiando el valor de una variable a la vez evaluando solo los factores que la tocan directamente.
