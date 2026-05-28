@@ -381,10 +381,10 @@ Inspirados en la teoría moderna de la evolución biológica, estructuran las b�
 
 ---
 
-#### 11. Problemas de Satisfacción de Restricciones (CSPs)
+## 11. Problemas de Satisfacción de Restricciones (CSPs)
 Esta área representa un cambio de paradigma en la IA: pasamos de los modelos basados en estados a los **modelos basados en variables**. En lugar de preocuparnos por una secuencia de acciones para llegar a una meta, nos enfocamos en encontrar una configuración de variables que cumpla con ciertas reglas.
 
-##### 11.1 Definición Formal y Grafos de Factores
+### 11.1 Definición Formal y Grafos de Factores
 
 ![Ejemplo de Grafo de Factores](https://stanford.edu/~shervine/teaching/cs-221/illustrations/factor-graph.png)
 
@@ -401,7 +401,7 @@ $$\text{Weight}(x) = \prod_{j=1}^{m} f_j(x)$$
 
 El lema fundamental de este paradigma es: **"Especificar localmente, optimizar globalmente"**. Tú modelas las reglas locales en factores pequeños y el algoritmo deduce la mejor solución global.
 
-##### 11.2 Búsqueda Exacta: Backtracking y Heurísticas
+### 11.2 Búsqueda Exacta: Backtracking y Heurísticas
 La solución por defecto para encontrar el peso máximo es la **Búsqueda con Retroceso (Backtracking Search)**, la cual explora el árbol de asignaciones. Sin embargo, como su tiempo es exponencial en el peor de los casos, requiere técnicas para podar caminos inútiles rápidamente:
 
 *   **Evaluación de Pesos Parciales:** No se espera hasta el final para evaluar los factores. Si al asignar algunas variables un factor da `0`, se detiene la búsqueda en esa rama y se hace retroceso (backtrack).
@@ -411,13 +411,13 @@ Para decidir el orden en el que se procesa el árbol, se usan dos heurísticas d
 1.  **Variable Más Restringida (MCV - Most Constrained Variable):** Al elegir qué variable asignar a continuación, escoge la que tenga **el dominio más pequeño**. *Inteligencia detrás:* Si nos vamos a equivocar, es mejor fallar rápido para podar el árbol pronto.
 2.  **Valor Menos Restringido (LCV - Least Constraining Value):** Una vez seleccionada la variable, se ordenan sus valores probando primero aquel que elimine **la menor cantidad de opciones** en los dominios de las variables vecinas. *Inteligencia detrás:* Queremos dejarle la mayor libertad posible a los vecinos para no quedarnos atascados.
 
-##### 11.3 Consistencia de Arco (AC-3)
+### 11.3 Consistencia de Arco (AC-3)
 Es una mejora agresiva sobre el *Forward Checking*.
 *   **Definición:** Una variable $$X_i$$ es "arco-consistente" respecto a $$X_j$$ si para cada valor disponible en el dominio de $$X_i$$, existe al menos un valor compatible en el dominio de $$X_j$$.
 *   **Algoritmo AC-3:** Mientras que el *Forward Checking* solo revisa un paso adelante, AC-3 aplica un efecto dominó continuo. Revisa a los vecinos, luego a los vecinos de los vecinos, propagando las restricciones hasta que ya no es posible eliminar más valores de los dominios.
 *   *Limitación:* AC-3 limpia enormemente el espacio de búsqueda en tiempo polinomial, pero **solo detecta inconsistencias locales**; los conflictos globales profundos aún requieren usar la Búsqueda Backtracking.
 
-##### 11.4 Búsquedas Aproximadas (Para eficiencia)
+### 11.4 Búsquedas Aproximadas (Para eficiencia)
 Cuando el problema es masivo y no hay tiempo para una búsqueda exacta (Backtracking), se intercambia la precisión matemática por velocidad:
 
 1.  **Búsqueda en Haz (Beam Search):** 
